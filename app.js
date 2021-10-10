@@ -8,7 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost/project-archioweb');
+mongoose.connect(process.env.DATABASE_URL || 'mongodb+srv://admin:<archioweb>@projet-archioweb.8sakj.mongodb.net/projet-archioweb?retryWrites=true&w=majority');
 
 var app = express();
 
