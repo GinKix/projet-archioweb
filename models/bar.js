@@ -7,10 +7,46 @@ const barSchema = new Schema({
       type: String,
       unique: true
     },
-    description: String,
-    creationDate: Date,
-    geolocation: String,
-    picture: String
+    description: {
+        type: String,
+        required: true,
+    },
+
+    creationDate: {
+        type: Date,
+        default: Date.now
+    },
+
+    LastModifiedDate: {
+        type: Date,
+        default: Date.now
+    },
+
+    geolocation: {
+        type: {
+            type: String,
+            required: true,
+            enum: [ 'Point' ]
+          },
+          coordinates: {
+            type: [ Number ],
+            required: true,
+            validate: {
+              validator: validateGeoJsonCoordinates,
+              message: '{VALUE} is not a valid longitude/latitude(/altitude) coordinates array'
+            
+          }
+        }
+      
+    },
+
+
+
+    picture: {
+        data: Buffer,
+        type: String
+    }
+
   });
   
   barSchema.set('toJSON', {
