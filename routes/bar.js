@@ -13,6 +13,8 @@ router.post("/api/bar", function (req, res, next) {
     //const bar = new Bar(req.body);
     //bar.save()
   });
+  
+});
 
   // à mettre à jour: trouver les bars proches, 
   //ce serait plus approprié d'utiliser un filtre sur 

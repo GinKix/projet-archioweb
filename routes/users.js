@@ -83,7 +83,18 @@ router.put('/api/person/:IdPerson', function (req, res, next) {
 });
 
 router.get('/api/person/:IdPerson', function (req, res, next) {
-  res.send('Récupérer l\'utilisateur ' + req.params.IdPerson);
+  //res.send('Récupérer l\'utilisateur ' + req.params.IdPerson);
+  //futur contenu du middleware A
+  Person.findById(req.params.IdPerson, function (err, person) {
+    if (err) {
+      return next(err);
+    } else if (!person) {
+      return personNotFound(res, req.params.IdPerson);
+    }
+    debug(req.person);
+    res.sendStatus(200);
+
+  });
 });
 
 module.exports = router;
