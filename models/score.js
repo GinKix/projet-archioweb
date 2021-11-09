@@ -3,7 +3,9 @@ const Schema = mongoose.Schema;
 
 // Define the schema for scores
 const scoreSchema = new Schema({
-  value: Double
+  value: Double,
+  userId: Int,
+  barId: Int
 });
 
 // Create the model from the schema and export it
