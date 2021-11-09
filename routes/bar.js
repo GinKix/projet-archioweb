@@ -5,6 +5,8 @@ const { Db } = require("mongodb");
 
 //BARS
 router.post("/api/bar", function (req, res, next) {
+
+  //Rajout des filtres, pagination ... By Yousra 
   res.send("Ajouter un bar "); // envoi de réponse au client
   //cf slides mongoose et integration mongooseExpress
 
