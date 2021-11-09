@@ -1,7 +1,0 @@
-{
-    "watch": [
-        "app.js",
-        "bin/www",
-        "routes/**/*.js"
-    ]
-}
