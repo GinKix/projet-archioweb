@@ -13,48 +13,49 @@ router.post("/api/bar", function (req, res, next) {
     //const bar = new Bar(req.body);
     //bar.save()
   });
-  
+
 });
 
-  // à mettre à jour: trouver les bars proches, 
-  //ce serait plus approprié d'utiliser un filtre sur 
-  //GET /api/bar , par exemple GET /api/bar?closeTo=lng,lat
-  router.get("/api/bar", function (req, res, next) {
-    res.send("Afficher la liste des bars /!\ ajouter l'aggrégation ici"); // envoi de réponse au client
-  });
+// à mettre à jour: trouver les bars proches, 
+//ce serait plus approprié d'utiliser un filtre sur 
+//GET /api/bar , par exemple GET /api/bar?closeTo=lng,lat
+router.get("/api/bar", function (req, res, next) {
+  res.send("Afficher la liste des bars /!\ ajouter l'aggrégation ici"); // envoi de réponse au client
+});
 
 
-  router.get("/api/bar/:IdBar", function (req, res, next) {
-    res.send("Afficher un bar "); // envoi de réponse au client
-
-    // Bar.find()
-  });
+router.get("/api/bar/:IdBar", function (req, res, next) {
+  res.send("Afficher un bar "); // envoi de réponse au client
 
 
-  router.put("/api/bar/:IdBar", function (req, res, next) {
-    res.send("Modifier un bar "); // envoi de réponse au client
-  });
+  // Bar.find()
+});
 
 
-  router.delete("/api/bar/:IdBar", function (req, res, next) {
-    res.send("Supprimer un bar "); // envoi de réponse au client
-  });
+router.put("/api/bar/:IdBar", function (req, res, next) {
+  res.send("Modifier un bar "); // envoi de réponse au client
+});
 
 
-  //RATINGS
-  router.get("/api/bar/:IdBar/rating", function (req, res, next) {
-    res.send("Afficher le rating dun bar"); // envoi de réponse au client
-  });
+router.delete("/api/bar/:IdBar", function (req, res, next) {
+  res.send("Supprimer un bar "); // envoi de réponse au client
+});
 
-  router.post("/api/bar/:IdBar/rating", function (req, res, next) {
-    res.send("Ajouter une note à un bar"); // envoi de réponse au client
-  });
 
-  router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
-    res.send("Supprimer une note à un bar"); // envoi de réponse au client
-  });
+//RATINGS
+router.get("/api/bar/:IdBar/rating", function (req, res, next) {
+  res.send("Afficher le rating dun bar"); // envoi de réponse au client
+});
 
-  router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
-    res.send("Modifier la note du bar"); // envoi de réponse au client
-  });
+router.post("/api/bar/:IdBar/rating", function (req, res, next) {
+  res.send("Ajouter une note à un bar"); // envoi de réponse au client
+});
+
+router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
+  res.send("Supprimer une note à un bar"); // envoi de réponse au client
+});
+
+router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
+  res.send("Modifier la note du bar"); // envoi de réponse au client
+});
 
