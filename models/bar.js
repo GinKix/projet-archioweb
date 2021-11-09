@@ -17,7 +17,7 @@ const barSchema = new Schema({
         default: Date.now
     },
 
-    LastModifiedDate: {
+    lastModifiedDate: {
         type: Date,
         default: Date.now
     },
