@@ -2,7 +2,9 @@
 //importer les schémas dans le dossier model
 
 const { Db } = require("mongodb");
-
+function barNotFound(res, barId) {
+  return res.status(404).type('text').send(`No bar found with ID ${barId}`);
+};
 //BARS
 router.post("/api/bar", function (req, res, next) {
 
@@ -10,10 +12,15 @@ router.post("/api/bar", function (req, res, next) {
   res.send("Ajouter un bar "); // envoi de réponse au client
   //cf slides mongoose et integration mongooseExpress
 
-  //essai 1
-  const bar = new Bar({
-    //const bar = new Bar(req.body);
-    //bar.save()
+  new Bar(req.body).save(function (err, savedBar) {
+    if (err) {
+      return next(err);
+    }
+
+    res
+      .status(201)
+      .send(savedBar);
+
   });
 
 });
@@ -23,6 +30,8 @@ router.post("/api/bar", function (req, res, next) {
 //GET /api/bar , par exemple GET /api/bar?closeTo=lng,lat
 router.get("/api/bar", function (req, res, next) {
   res.send("Afficher la liste des bars /!\ ajouter l'aggrégation ici"); // envoi de réponse au client
+
+
 });
 
 
@@ -35,12 +44,49 @@ router.get("/api/bar/:IdBar", function (req, res, next) {
 
 
 router.put("/api/bar/:IdBar", function (req, res, next) {
-  res.send("Modifier un bar "); // envoi de réponse au client
+  //res.send("Modifier un bar "); // envoi de réponse au client
+
+  //futur contenu du middleware B
+  Bar.findById(req.params.IdBar, function (err, bar) {
+    if (err) {
+      return next(err);
+    } else if (!bar) {
+      return barNotFound(res, req.params.IdBar);
+    }
+
+    bar.update(function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      debug(`Bar  updated: "${req.bar.name}"`);
+      res.sendStatus(200);
+    });
+  });
+
 });
 
 
 router.delete("/api/bar/:IdBar", function (req, res, next) {
-  res.send("Supprimer un bar "); // envoi de réponse au client
+  //res.send("Supprimer un bar "); // envoi de réponse au client
+  Bar.findById(req.params.IdBar, function (err, bar) {
+    if (err) {
+      return next(err);
+    } else if (!bar) {
+      return barNotFound(res, req.params.IdBar);
+    }
+
+
+    bar.remove(function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      debug(`Deleted bar "${req.bar.name}"`);
+      res.sendStatus(204);
+    });
+  });
+
 });
 
 
