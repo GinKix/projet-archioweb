@@ -39,7 +39,7 @@ const barSchema = new Schema({
         }
       
     },
-
+//Rajout du schema geoloc et du rate by Yousra 
 
 
     picture: {
