@@ -71,20 +71,12 @@ router.get("/api/bar", function (req, res, next) {
         return next(err);
       }
 
-    res.send("Afficher la liste des bars /!\ ajouter l'aggrégation ici"); // envoi de réponse au client
-  });
-});
-});
-
-<<<<<<< HEAD
       res.send("Afficher la liste des bars /!\ ajouter l'aggrégation ici"); // envoi de réponse au client
-
 
     });
   });
 });
-=======
->>>>>>> 45ed911e5b2db817dd18781a02c1aba91bd3f941
+
 
 
 router.get("/api/bar/:IdBar", function (req, res, next) {
@@ -196,7 +188,6 @@ router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
         return next(err);
       }
 
-<<<<<<< HEAD
       debug(`Deleted person "${req.person.username}"`);
       res.sendStatus(204);
     });
@@ -207,8 +198,3 @@ router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
 router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
   res.send("Modifier la note du bar"); // envoi de réponse au client
 });
-=======
-    router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
-      res.send("Modifier la note du bar"); // envoi de réponse au client
-    });
->>>>>>> 45ed911e5b2db817dd18781a02c1aba91bd3f941
