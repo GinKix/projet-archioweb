@@ -92,15 +92,55 @@ router.delete("/api/bar/:IdBar", function (req, res, next) {
 
 //RATINGS
 router.get("/api/bar/:IdBar/rating", function (req, res, next) {
-  res.send("Afficher le rating dun bar"); // envoi de réponse au client
+  //res.send("Afficher le rating dun bar");
+
+  // envoi de réponse au client
+  /* A reprendre, probablement erreur, doit-on mettre savedScore ou Score?
+  
+  new Score(req.body).save(function (err, savedScore) {
+ 
+     Score.findById(req.params.IdScore.value, function (err, bar) {
+       if (err) {
+         return next(err);
+       } else if (!score) {
+         return barNotFound(res, req.params.IdScore);
+       }
+       debug(req.Score);
+       res
+       .send(savedScore)
+       .status(201);
+     });
+}); */
 });
 
 router.post("/api/bar/:IdBar/rating", function (req, res, next) {
-  res.send("Ajouter une note à un bar"); // envoi de réponse au client
+  //res.send("Ajouter une note à un bar"); // envoi de réponse au client
+
+
+
 });
 
 router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
-  res.send("Supprimer une note à un bar"); // envoi de réponse au client
+  //res.send("Supprimer une note à un bar"); // envoi de réponse au client
+
+  Score.findById(req.params.IdScore, function (err, savedScore) {
+    if (err) {
+      return next(err);
+    } else if (!person) {
+      return personNotFound(res, req.params.IdPerson);
+    }
+
+
+    person.remove(function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      debug(`Deleted person "${req.person.username}"`);
+      res.sendStatus(204);
+    });
+  });
+
 });
 
 router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
