@@ -148,15 +148,23 @@ router.get("/api/bar/:IdBar/rating", function (req, res, next) {
 
 router.post("/api/bar/:IdBar/rating", function (req, res, next) {
   //res.send("Ajouter une note à un bar"); // envoi de réponse au client
+  new Rating(req.body).save(function (err, savedRating) {
+    if (err) {
+      return next(err);
+    }
+
+    res
+      .status(201)
+      .send(savedRating);
 
 
-
+  });
 });
 
 router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
   //res.send("Supprimer une note à un bar"); // envoi de réponse au client
 
-  Score.findById(req.params.IdScore, function (err, savedScore) {
+  Score.findById(req.params.IdScore, function (err, savedRating) {
     if (err) {
       return next(err);
     } else if (!person) {
