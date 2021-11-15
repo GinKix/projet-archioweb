@@ -1,7 +1,18 @@
 const debug = require('debug')('projet:users');
-
 var express = require('express');
 var router = express.Router();
+
+/**
+ * @api {get} /users/:id Request a user's information
+ * @apiName GetUser
+ * @apiGroup User
+ *
+ * @apiParam {Number} id Unique identifier of the user
+ *
+ * @apiSuccess {String} firstName First name of the user
+ * @apiSuccess {String} lastName  Last name of the user
+ */
+
 //sert à envoyer la réponse "personne pas trouvée"
 function personNotFound(res, personId) {
   return res.status(404).type('text').send(`No person found with ID ${personId}`);

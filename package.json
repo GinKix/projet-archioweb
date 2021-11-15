@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "apidoc": "",
+    "apidoc": "apidoc -i routes -o docs",
     "dev": "nodemon",
     "start": "node ./bin/www",
     "test": "cross-env DATABASE_URL=mongodb://127.0.0.1/projet-test NODE_ENV=test mocha spec/**/*.spec.js"

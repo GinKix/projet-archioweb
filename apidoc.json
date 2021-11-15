@@ -1,8 +1,7 @@
 {
-    "nom" : " projet " ,
-    "version" : " 1.0.0 " ,
-    " description " : " apiDoc " ,
-    " titre " : " projet " ,
-    " url " : " https://projet-archioweb.herokuapp.com/ " 
- 
+    "name": "Projet ArchIOWeb",
+    "version": "1.0.0",
+    "description": "Projet dans le cadre du cours ArchIOWeb",
+    "title": "projet",
+    "url" : "https://projet-archioweb.herokuapp.com"
   }
