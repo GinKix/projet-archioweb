@@ -8,7 +8,7 @@ function barNotFound(res, barId) {
 //BARS
 router.post("/api/bar", function (req, res, next) {
 
-  //Rajout des filtres, pagination ... By Yousra 
+ 
   res.send("Ajouter un bar "); // envoi de réponse au client
   //cf slides mongoose et integration mongooseExpress
 
@@ -29,6 +29,37 @@ router.post("/api/bar", function (req, res, next) {
 //ce serait plus approprié d'utiliser un filtre sur 
 //GET /api/bar , par exemple GET /api/bar?closeTo=lng,lat
 router.get("/api/bar", function (req, res, next) {
+
+
+  // Count total bar matching the URL query parameters
+  const countQuery = queryBar(req);
+  countQuery.count(function (err, total) {
+    if (err) {
+      return next(err);
+    }
+  
+  // Prepare the initial database query from the URL query parameters
+  let query = queryBar(req);
+
+  // Parse pagination parameters from URL query parameters
+   const { page, pageSize } = pag.getPaginationParameters(req);
+
+  // Apply the pagination to the database query
+   query = query.skip((page - 1) * pageSize).limit(pageSize);
+  // Add the Link header to the response
+   pag.addLinkHeader('/api/bar', page, pageSize, total, res);
+  // Filter bar by rate
+  if (ObjectId.isValid(req.query.rate)) {
+    query = query.where('rate').equals(req.query.rate);
+  }
+  
+   // Execute the query
+   query.sort({ name: 1 }).exec(function (err, bar) {
+    if (err) {
+      return next(err);
+    }
+
+
   res.send("Afficher la liste des bars /!\ ajouter l'aggrégation ici"); // envoi de réponse au client
 
 
