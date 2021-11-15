@@ -28,6 +28,9 @@ app.use(function(req, res, next) {
   next();
 });
 
+// Serve the apiDoc documentation.
+app.use('/apidoc', express.static(path.join(__dirname, 'docs')));
+
 app.get('/hello', function() {
   res.send('World');
 });
