@@ -3,21 +3,29 @@
 
 const { Db } = require("mongodb");
 
+
+
+function barNotFound(res, barId) {
+  return res.status(404).type('text').send(`No bar found with ID ${barId}`);
+};
+
+
+function RatingNotFound(res, barId) {
+  return res.status(404).type('text').send(`No rating found for this bar: ${barId}`);
+};
+//BARS
+
+
 /**
- * @api {get} /users/:id Request a user's information
+ * @api {post} /api/bar Request add bar
  * @apiName GetUser
  * @apiGroup User
  *
  * @apiParam {Number} id Unique identifier of the user
  *
- * @apiSuccess {String} firstName First name of the user
- * @apiSuccess {String} lastName  Last name of the user
+ * @apiSuccess code status: 201
+ * 
  */
-
-function barNotFound(res, barId) {
-  return res.status(404).type('text').send(`No bar found with ID ${barId}`);
-};
-//BARS
 router.post("/api/bar", function (req, res, next) {
 
 
@@ -138,23 +146,22 @@ router.delete("/api/bar/:IdBar", function (req, res, next) {
 router.get("/api/bar/:IdBar/rating", function (req, res, next) {
   //res.send("Afficher le rating dun bar");
 
-  // envoi de réponse au client
-  /* A reprendre, probablement erreur, doit-on mettre savedScore ou Score?
-  
-  new Score(req.body).save(function (err, savedScore) {
- 
-     Score.findById(req.params.IdScore.value, function (err, bar) {
-       if (err) {
-         return next(err);
-       } else if (!score) {
-         return barNotFound(res, req.params.IdScore);
-       }
-       debug(req.Score);
-       res
-       .send(savedScore)
-       .status(201);
-     });
-}); */
+
+
+  new Rating(req.body).save(function (err, savedRating) {
+
+    Rating.findById(req.params.IdRating.value, function (err, bar) {
+      if (err) {
+        return next(err);
+      } else if (!rating) {
+        return RatingNotFound(res, req.params.IdRating);
+      }
+      debug(req.Rating);
+      res
+        .send(savedRating)
+        .status(201);
+    });
+  });
 });
 
 router.post("/api/bar/:IdBar/rating", function (req, res, next) {
@@ -175,20 +182,20 @@ router.post("/api/bar/:IdBar/rating", function (req, res, next) {
 router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
   //res.send("Supprimer une note à un bar"); // envoi de réponse au client
 
-  Score.findById(req.params.IdScore, function (err, savedRating) {
+  Rating.findById(req.params.IdRating, function (err, savedRating) {
     if (err) {
       return next(err);
-    } else if (!person) {
-      return personNotFound(res, req.params.IdPerson);
+    } else if (!rating) {
+      return personNotFound(res, req.params.IdRating);
     }
 
 
-    person.remove(function (err) {
+    rating.remove(function (err) {
       if (err) {
         return next(err);
       }
 
-      debug(`Deleted person "${req.person.username}"`);
+      debug(`Deleted rating "${req.rating.id}"`);
       res.sendStatus(204);
     });
   });
@@ -196,5 +203,24 @@ router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
 });
 
 router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
-  res.send("Modifier la note du bar"); // envoi de réponse au client
+  //res.send("Modifier la note du bar"); // envoi de réponse au client
+  Rating.findById(req.params.IdRating, function (err, savedRating) {
+    if (err) {
+      return next(err);
+    } else if (!rating) {
+      return personNotFound(res, req.params.IdRating);
+    }
+
+    rating.update(function (err) {
+
+      if (err) {
+        return next(err);
+      }
+
+      debug(`Rating updated: "${req.rating.id}"`);
+      res.sendStatus(200);
+    });
+
+  });
+
 });
