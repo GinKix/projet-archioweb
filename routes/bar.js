@@ -1,6 +1,6 @@
-//Comment faire quand on a une route qui passe par un identifiant de ressource?
-//importer les schémas dans le dossier model
-
+const { authenticate } = require('./auth');
+const express = require('express');
+const router = express.Router();
 const { Db } = require("mongodb");
 
 
@@ -24,7 +24,7 @@ function RatingNotFound(res, barId) {
  * @apiSuccess {String} code 201: sucess
  * @apiSuccess {Function} savedBar
  */
-router.post("/api/bar", function (req, res, next) {
+router.post("/api/bar", authenticate, function (req, res, next) {
 
 
   res.send("Ajouter un bar "); // envoi de réponse au client
@@ -177,7 +177,7 @@ router.get("/api/bar/:IdBar", function (req, res, next) {
  * @apiSuccess {String} code 200: OK
  * @apiError {Function} barNotFound 
  */
-router.put("/api/bar/:IdBar", function (req, res, next) {
+router.put("/api/bar/:IdBar", authenticate, function (req, res, next) {
   //res.send("Modifier un bar "); // envoi de réponse au client
 
   Bar.findById(req.params.IdBar, function (err, bar) {
@@ -208,7 +208,7 @@ router.put("/api/bar/:IdBar", function (req, res, next) {
  * @apiError {Function} barNotFound 
  */
 
-router.delete("/api/bar/:IdBar", function (req, res, next) {
+router.delete("/api/bar/:IdBar", authenticate, function (req, res, next) {
   //res.send("Supprimer un bar "); // envoi de réponse au client
   Bar.findById(req.params.IdBar, function (err, bar) {
     if (err) {
@@ -269,7 +269,7 @@ router.get("/api/bar/:IdBar/rating", function (req, res, next) {
  * @apiSuccess {Function} savedRating
  * @apiError {Function} RatingNotFound 
  */
-router.post("/api/bar/:IdBar/rating", function (req, res, next) {
+router.post("/api/bar/:IdBar/rating", authenticate, function (req, res, next) {
   //res.send("Ajouter une note à un bar"); // envoi de réponse au client
   new Rating(req.body).save(function (err, savedRating) {
     if (err) {
@@ -292,7 +292,7 @@ router.post("/api/bar/:IdBar/rating", function (req, res, next) {
  * @apiError {Function} RatingNotFound 
  */
 
-router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
+router.delete("/api/:IdBar/rating/:IdRating", authenticate, function (req, res, next) {
   //res.send("Supprimer une note à un bar"); // envoi de réponse au client
 
   Rating.findById(req.params.IdRating, function (err, savedRating) {
@@ -324,7 +324,7 @@ router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
  * @apiSuccess {String} Rating updated IdRating
  * @apiError {Function} RatingNotFound 
  */
-router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
+router.put("/api/bar/:IdBar/rating/:IdRating", authenticate, function (req, res, next) {
   //res.send("Modifier la note du bar"); // envoi de réponse au client
   Rating.findById(req.params.IdRating, function (err, savedRating) {
     if (err) {
