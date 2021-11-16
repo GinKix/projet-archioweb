@@ -80,7 +80,7 @@ router.get("/api/bar", function (req, res, next) {
         $lookup: {
           from: 'bar',
           localField: 'idBar',
-          foreignField: 'IdRating',
+          foreignField: 'idRating',
           as: 'ratedBar'
         }
       },
@@ -153,14 +153,14 @@ router.get("/api/bar", function (req, res, next) {
  * @apiSuccess {String} code 200: OK
  * @apiError {Function} barNotFound 
  */
-router.get("/api/bar/:IdBar", function (req, res, next) {
+router.get("/api/bar/:idBar", function (req, res, next) {
   //res.send("Afficher un bar "); // envoi de réponse au client
 
-  Bar.findById(req.params.IdBar, function (err, bar) {
+  Bar.findById(req.params.idBar, function (err, bar) {
     if (err) {
       return next(err);
     } else if (!bar) {
-      return barNotFound(res, req.params.IdBar);
+      return barNotFound(res, req.params.idBar);
     }
     debug(req.bar);
     res.sendStatus(200);
@@ -177,10 +177,10 @@ router.get("/api/bar/:IdBar", function (req, res, next) {
  * @apiSuccess {String} code 200: OK
  * @apiError {Function} barNotFound 
  */
-router.put("/api/bar/:IdBar", authenticate, function (req, res, next) {
+router.put("/api/bar/:idBar", authenticate, function (req, res, next) {
   //res.send("Modifier un bar "); // envoi de réponse au client
 
-  Bar.findById(req.params.IdBar, function (err, bar) {
+  Bar.findById(req.params.idBar, function (err, bar) {
     if (err) {
       return next(err);
     } else if (!bar) {
@@ -208,13 +208,13 @@ router.put("/api/bar/:IdBar", authenticate, function (req, res, next) {
  * @apiError {Function} barNotFound 
  */
 
-router.delete("/api/bar/:IdBar", authenticate, function (req, res, next) {
+router.delete("/api/bar/:idBar", authenticate, function (req, res, next) {
   //res.send("Supprimer un bar "); // envoi de réponse au client
-  Bar.findById(req.params.IdBar, function (err, bar) {
+  Bar.findById(req.params.idBar, function (err, bar) {
     if (err) {
       return next(err);
     } else if (!bar) {
-      return barNotFound(res, req.params.IdBar);
+      return barNotFound(res, req.params.idBar);
     }
 
 
@@ -241,15 +241,15 @@ router.delete("/api/bar/:IdBar", authenticate, function (req, res, next) {
  * @apiSuccess {String} code 201: sucess
  * @apiError {Function} RatingNotFound 
  */
-router.get("/api/bar/:IdBar/rating", function (req, res, next) {
+router.get("/api/bar/:idBar/rating", function (req, res, next) {
   //res.send("Afficher le rating dun bar");
   new Rating(req.body).save(function (err, savedRating) {
 
-    Rating.findById(req.params.IdRating.value, function (err, bar) {
+    Rating.findById(req.params.idRating.value, function (err, bar) {
       if (err) {
         return next(err);
       } else if (!rating) {
-        return RatingNotFound(res, req.params.IdRating);
+        return RatingNotFound(res, req.params.idRating);
       }
       debug(req.Rating);
       res
@@ -269,7 +269,7 @@ router.get("/api/bar/:IdBar/rating", function (req, res, next) {
  * @apiSuccess {Function} savedRating
  * @apiError {Function} RatingNotFound 
  */
-router.post("/api/bar/:IdBar/rating", authenticate, function (req, res, next) {
+router.post("/api/bar/:idBar/rating", authenticate, function (req, res, next) {
   //res.send("Ajouter une note à un bar"); // envoi de réponse au client
   new Rating(req.body).save(function (err, savedRating) {
     if (err) {
@@ -292,14 +292,14 @@ router.post("/api/bar/:IdBar/rating", authenticate, function (req, res, next) {
  * @apiError {Function} RatingNotFound 
  */
 
-router.delete("/api/:IdBar/rating/:IdRating", authenticate, function (req, res, next) {
+router.delete("/api/:IdBar/rating/:idRating", authenticate, function (req, res, next) {
   //res.send("Supprimer une note à un bar"); // envoi de réponse au client
 
-  Rating.findById(req.params.IdRating, function (err, savedRating) {
+  Rating.findById(req.params.idRating, function (err, savedRating) {
     if (err) {
       return next(err);
     } else if (!rating) {
-      return RatingNotFound(res, req.params.IdRating);
+      return RatingNotFound(res, req.params.idRating);
     }
 
 
@@ -324,13 +324,13 @@ router.delete("/api/:IdBar/rating/:IdRating", authenticate, function (req, res, 
  * @apiSuccess {String} Rating updated IdRating
  * @apiError {Function} RatingNotFound 
  */
-router.put("/api/bar/:IdBar/rating/:IdRating", authenticate, function (req, res, next) {
+router.put("/api/bar/:idBar/rating/:idRating", authenticate, function (req, res, next) {
   //res.send("Modifier la note du bar"); // envoi de réponse au client
-  Rating.findById(req.params.IdRating, function (err, savedRating) {
+  Rating.findById(req.params.idRating, function (err, savedRating) {
     if (err) {
       return next(err);
     } else if (!rating) {
-      return RatingNotFound(res, req.params.IdRating);
+      return RatingNotFound(res, req.params.idRating);
     }
 
     rating.update(function (err) {
