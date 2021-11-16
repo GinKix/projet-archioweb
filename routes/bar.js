@@ -94,7 +94,7 @@ router.get("/api/bar", function (req, res, next) {
       },
       {
         $group: {
-          IdBar: '$idBar',
+          idBar: '$idBar',
           rating: { $avg: '$rating' },
           name: { $first: '$name' },
 
