@@ -45,9 +45,28 @@ router.post("/api/bar", function (req, res, next) {
 
 });
 
-// à mettre à jour: trouver les bars proches, 
-//ce serait plus approprié d'utiliser un filtre sur 
-//GET /api/bar , par exemple GET /api/bar?closeTo=lng,lat
+/**
+ * @api {get} /api/bar
+ * @apiName RetrieveBar
+ * @apiGroup Bar
+ * @apiVersion 1.0.0
+ * @apiDescription Retrieves a paginated list of bar sorted by name (in alphabetical order).
+ *
+ * @apiUse BarInResponseBody
+ * @apiUse Pagination
+ *
+ * @apiParam (URL query parameters) /api/bar?closeTo=lng,lat
+ *
+ * @apiExample Example
+ *     GET /api/bar?closeTo=lng,lat
+ *
+ * @apiSuccessExample 200 OK
+ *     HTTP/1.1 200 OK
+ *     Content-Type: application/json
+ *     Link: &lt;https://projet-archioweb.herokuapp.com/api/bar?closeTo=lng,lat;; rel="first prev"
+ *
+ *    
+ */
 router.get("/api/bar", function (req, res, next) {
 
 
@@ -63,9 +82,53 @@ router.get("/api/bar", function (req, res, next) {
 
     // Parse pagination parameters from URL query parameters
     const { page, pageSize } = pag.getPaginationParameters(req);
+       // Apply the pagination to the database query
+       query = query.skip((page - 1) * pageSize).limit(pageSize);
 
-    // Apply the pagination to the database query
-    query = query.skip((page - 1) * pageSize).limit(pageSize);
+    Bar.aggregate([
+        {
+          $lookup: {
+            from: 'bar',
+            localField: 'idBar',
+            foreignField: 'IdRating',
+            as: 'ratedBar'
+          }
+        },
+        {
+            $unwind: {
+              path: '$ratedBar',
+              // Preserve bar without rating
+              // ("ratedBar" will be null).
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $group: {
+              IdBar: '$idBar',
+              rating: { $avg: '$rating' },
+              name: { $first: '$name' },
+
+              
+            }
+          },
+        
+          {
+            $sort: {
+              name: 1
+            }
+          },
+          {
+            $skip: (page - 1) * pageSize
+          },
+          {
+            $limit: pageSize
+          }
+        ], (err, bar) => {
+            if (err) {
+              return next(err);
+            }
+    
+ 
     // Add the Link header to the response
     pag.addLinkHeader('/api/bar', page, pageSize, total, res);
     // Filter bar by rate
@@ -73,19 +136,21 @@ router.get("/api/bar", function (req, res, next) {
       query = query.where('rate').equals(req.query.rate);
     }
 
+
+
     // Execute the query
     query.sort({ name: 1 }).exec(function (err, bar) {
       if (err) {
         return next(err);
       }
-
-      res.send("Afficher la liste des bars /!\ ajouter l'aggrégation ici"); // envoi de réponse au client
+    
+      res.send(bar); // envoi de réponse au client
 
     });
   });
 });
 
-
+});
 
 router.get("/api/bar/:IdBar", function (req, res, next) {
   res.send("Afficher un bar "); // envoi de réponse au client
