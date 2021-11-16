@@ -4,8 +4,9 @@ const User = require('../models/user');
 const { authenticate } = require('./auth');
 const config = require('../config');
 const debug = require('debug')('projet:users');
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const { broadcastMessage } = require('../messaging');
 
 /**
  * @api {get} /users/:id Request a user's information
@@ -40,6 +41,8 @@ router.get('/api/person', authenticate, function (req, res, next) {
   console.log(req.path);
   console.log(req.params);
   console.log(req.query);
+
+  broadcastMessage({ person : 'récupéré' });
 });
 
 
@@ -85,6 +88,8 @@ router.post('/api/person', function (req, res, next) {
       res
         .status(201)
         .send(savedPerson);
+
+      broadcastMessage({ person : 'créé' });
     });
   });
 });
@@ -118,13 +123,10 @@ router.delete('/api/person/:IdPerson', /* utils.requireJson, */ function (req, r
 
       debug(`Deleted person "${req.person.username}"`);
       res.sendStatus(204);
+
+      broadcastMessage({ person : 'supprimé' });
     });
-
   });
-
-
-  //faire un require dans ce document, ailleurs
-
 });
 
 /**
@@ -153,6 +155,8 @@ router.put('/api/person/:IdPerson', function (req, res, next) {
 
       debug(`Person updated: "${req.person.username}"`);
       res.sendStatus(200);
+
+      broadcastMessage({ person : 'modifié' });
     });
   });
 });
@@ -177,6 +181,7 @@ router.get('/api/person/:IdPerson', authenticate, function (req, res, next) {
     debug(req.person);
     req.sendStatus(200);
 
+    broadcastMessage({ person : 'récupéré' });
   });
 });
 
@@ -217,6 +222,8 @@ router.post('/api/login', function (req, res, next) {
       });
 
       res.send(`Welcome ${user.name}!`);
+
+      broadcastMessage({ person : 'loggé' });
     });
   })
 });

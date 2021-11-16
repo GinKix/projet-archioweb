@@ -1,3 +1,4 @@
+const { Double } = require('bson');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 //Create geolocation Schema
@@ -38,9 +39,13 @@ function isLongitude(value) {
 
 // Define the schema for bars
 const barSchema = new Schema({
-    name: {
+  idBar: {
+    type: Double,
+    unique: true,
+  },
+  name: {
       type: String,
-      unique: true
+      required: true,
     },
     description: {
         type: String,
