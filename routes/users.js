@@ -1,3 +1,8 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const { authenticate } = require('./auth');
+const config = require('../config');
 const debug = require('debug')('projet:users');
 var express = require('express');
 var router = express.Router();
@@ -19,7 +24,7 @@ function personNotFound(res, personId) {
 };
 
 /* Pas dans notre doc, pourquoi? */
-router.get('/users', function (req, res, next) {
+router.get('/api/person', authenticate, function (req, res, next) {
   res.send('Récupérer les utilisateurs');
   console.log(req.method);
   console.log(req.path);
@@ -29,7 +34,9 @@ router.get('/users', function (req, res, next) {
 
 router.post('/api/person', function (req, res, next) {
   //res.send('Ajouter un utilisateur');
-  new Person(req.body).save(function (err, savedPerson) {
+  const plainPassword = req.body.password;
+
+  /* new Person(req.body).save(function (err, savedPerson) {
     if (err) {
       return next(err);
     }
@@ -37,6 +44,25 @@ router.post('/api/person', function (req, res, next) {
     res
       .status(201)
       .send(savedPerson);
+  }); */
+
+  bcrypt.hash(plainPassword, config.bcryptCostFactor, function(err, passwordHash){
+
+    if (err) {
+      return next(err);
+    }
+    // Create a new document from the JSON in the request body
+    const newPerson = new User(req.body);
+    newPerson.password = passwordHash;
+
+    // Save that document
+    newPerson.save(function(err, savedPerson) {
+      if (err) {
+        return next(err);
+      }
+      // Send the saved document in the response
+      res.send(savedPerson);
+    });
   });
 });
 
@@ -93,7 +119,7 @@ router.put('/api/person/:IdPerson', function (req, res, next) {
   });
 });
 
-router.get('/api/person/:IdPerson', function (req, res, next) {
+router.get('/api/person/:IdPerson', authenticate, function (req, res, next) {
   //res.send('Récupérer l\'utilisateur ' + req.params.IdPerson);
   //futur contenu du middleware A
   Person.findById(req.params.IdPerson, function (err, person) {
@@ -106,6 +132,38 @@ router.get('/api/person/:IdPerson', function (req, res, next) {
     res.sendStatus(200);
 
   });
+});
+
+router.post('/api/login', function(req, res, next) {
+  
+
+  User.findOne({ name: req.body.name }).exec(function(err, user) {
+    if (err) {
+      return next(err);
+    } else if (!user) {
+      return res.sendStatus(401);
+    }
+
+    bcrypt.compare(req.body.password, user.password, function(err, valid) {
+      if (err) {
+        return next(err);
+      } else if (!valid) {
+        return res.sendStatus(401);
+      }
+      // Generate a valid JWT which expires in 7 days.
+      const exp = Math.floor(Date.now() / 1000) + 7 * 24 * 3600;
+      const payload = { sub: user._id.toString(), exp: exp };
+      jwt.sign(payload, config.secretKey, function(err, token) {
+        if (err) { 
+          return next(err); 
+        }
+
+        res.send({ token: token }); // Send the token to the client.        
+      });
+
+      res.send(`Welcome ${user.name}!`);
+    });
+  })
 });
 
 module.exports = router;
