@@ -23,7 +23,12 @@ function personNotFound(res, personId) {
   return res.status(404).type('text').send(`No person found with ID ${personId}`);
 };
 
-/* Pas dans notre doc, pourquoi? */
+/**
+ * @api {get} /person/  Show all users
+ * @apiName GetUser
+ * @apiGroup User
+ *
+ */
 router.get('/api/person', authenticate, function (req, res, next) {
   res.send('Récupérer les utilisateurs');
   console.log(req.method);
@@ -32,11 +37,22 @@ router.get('/api/person', authenticate, function (req, res, next) {
   console.log(req.query);
 });
 
+
+
+/**
+ * @api {post} /person/ Create a user
+ * @apiName PostUser
+ * @apiGroup User
+ *
+ * @apiSuccess {String} code 201: sucess
+ * @apiSuccess {Function} savedPerson
+ */
 router.post('/api/person', function (req, res, next) {
   //res.send('Ajouter un utilisateur');
   const plainPassword = req.body.password;
 
-  /* new Person(req.body).save(function (err, savedPerson) {
+  /* Version sans authentification
+  new Person(req.body).save(function (err, savedPerson) {
     if (err) {
       return next(err);
     }
@@ -46,7 +62,7 @@ router.post('/api/person', function (req, res, next) {
       .send(savedPerson);
   }); */
 
-  bcrypt.hash(plainPassword, config.bcryptCostFactor, function(err, passwordHash){
+  bcrypt.hash(plainPassword, config.bcryptCostFactor, function (err, passwordHash) {
 
     if (err) {
       return next(err);
@@ -56,18 +72,27 @@ router.post('/api/person', function (req, res, next) {
     newPerson.password = passwordHash;
 
     // Save that document
-    newPerson.save(function(err, savedPerson) {
+    newPerson.save(function (err, savedPerson) {
       if (err) {
         return next(err);
       }
       // Send the saved document in the response
-      res.send(savedPerson);
+      res
+        .status(201)
+        .send(savedPerson);
     });
   });
 });
 
 
-
+/**
+ * @api {delete} /person/:idPerson Delete a user
+ * @apiName DeleteUser
+ * @apiGroup User
+ *
+ * @apiSuccess {String} code 204: Sucess but no data to send
+ * @apiSuccess {String} username
+ */
 router.delete('/api/person/:IdPerson', /* utils.requireJson, */ function (req, res, next) {
   //On ne peut avoir qu'une res par route car seule la première réponse est présentée au client, après ça fait des erreurs
   // res.send('respond with a resource' + req.params.IdPerson);
@@ -97,6 +122,14 @@ router.delete('/api/person/:IdPerson', /* utils.requireJson, */ function (req, r
 
 });
 
+/**
+ * @api {put} /person/:IdPerson Modify a user
+ * @apiName PutUser
+ * @apiGroup User
+ *
+ * @apiSuccess {String} code 200: OK
+ * @apiSuccess {String} Person updated: username
+ */
 router.put('/api/person/:IdPerson', function (req, res, next) {
   //res.send('Modifier un utilisateur');
 
@@ -119,6 +152,14 @@ router.put('/api/person/:IdPerson', function (req, res, next) {
   });
 });
 
+/**
+ * @api {get} /person/:IdPerson Get (not showing) a specific user
+ * @apiName GetUser
+ * @apiGroup User
+ *
+ * @apiSuccess {String} code 200: OK
+ * @apiSuccess {Function} savedPerson
+ */
 router.get('/api/person/:IdPerson', authenticate, function (req, res, next) {
   //res.send('Récupérer l\'utilisateur ' + req.params.IdPerson);
   //futur contenu du middleware A
@@ -129,22 +170,31 @@ router.get('/api/person/:IdPerson', authenticate, function (req, res, next) {
       return personNotFound(res, req.params.IdPerson);
     }
     debug(req.person);
-    res.sendStatus(200);
+    req.sendStatus(200);
 
   });
 });
 
-router.post('/api/login', function(req, res, next) {
-  
+/**
+ * @api {post} /login/ Login a user
+ * @apiName LogUser
+ * @apiGroup User
+ *
+ * @apiError {String} code 401: Unauthorized
+ * @apiSuccess {String} Welcome username !
+ */
 
-  User.findOne({ name: req.body.name }).exec(function(err, user) {
+router.post('/api/login', function (req, res, next) {
+
+
+  User.findOne({ name: req.body.name }).exec(function (err, user) {
     if (err) {
       return next(err);
     } else if (!user) {
       return res.sendStatus(401);
     }
 
-    bcrypt.compare(req.body.password, user.password, function(err, valid) {
+    bcrypt.compare(req.body.password, user.password, function (err, valid) {
       if (err) {
         return next(err);
       } else if (!valid) {
@@ -153,9 +203,9 @@ router.post('/api/login', function(req, res, next) {
       // Generate a valid JWT which expires in 7 days.
       const exp = Math.floor(Date.now() / 1000) + 7 * 24 * 3600;
       const payload = { sub: user._id.toString(), exp: exp };
-      jwt.sign(payload, config.secretKey, function(err, token) {
-        if (err) { 
-          return next(err); 
+      jwt.sign(payload, config.secretKey, function (err, token) {
+        if (err) {
+          return next(err);
         }
 
         res.send({ token: token }); // Send the token to the client.        
