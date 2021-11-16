@@ -1,3 +1,4 @@
+// Module dependencies
 const supertest = require('supertest');
 const app = require('../app');
 const { expect } = require('chai');
@@ -5,8 +6,8 @@ const mongoose = require('mongoose');
 const { cleanUpDatabase } = require('./utils');
 const jwt = require('jsonwbebtoken')
 const config = require('../config');
-const User = require('../models/user');
 
+// Nettoyage + fermeture de la connexion à la BD à chaque test
 beforeEach(cleanUpDatabase);
 after(mongoose.disconnect);
 
@@ -45,32 +46,34 @@ describe('POST /api/person', function() {
 });
 
 describe('GET /api/person', function() {
-  let user;
-  beforeEach(async function(){
-      const users = await Promise.all([
-          user.create({ username: 'John Doe', password: '1234' }),
-          user.create({ username: 'Jane Doe', password: '1234' })
-      ]);
+    // Insertion d'utilisateurs dans la BD test
+    let user;
+    beforeEach(async function(){
+        const users = await Promise.all([
+            user.create({ username: 'John Doe', password: '1234' }),
+            user.create({ username: 'Jane Doe', password: '1234' })
+        ]);
 
-      // Retrouver un utilisateur
-      user = users[0];
-  });
+        // Retrouver un utilisateur
+        user = users[0];
+    });
 
-  it('should retrieve the list of users');
+    it('should retrieve the list of users');
     const token = await generateValidJwt(user);
     const res = await supertest(app)
         .get('/users')
+        .set('Authorization', `Bearer ${token}`)
         .expect(200)
         .expect('Content-Type', /json/);
 
     expect(res.body).to.be.an('array');
-    expect(res.body).to.have.lengthOf(0);
+    expect(res.body).to.have.lengthOf(2);
 
     expect(res.body[0]).to.be.an('object');
     expect(res.body[0]._id).to.be.a('string');
     expect(res.body[0].name).to.equal('Jane Doe');
     expect(res.body[0]).to.have.all.keys('_id', 'username');
-    
+
     expect(res.body[1]).to.be.an('object');
     expect(res.body[1]._id).to.be.a('string');
     expect(res.body[1].name).to.equal('John Doe');
