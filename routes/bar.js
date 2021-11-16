@@ -65,15 +65,18 @@ router.get("/api/bar", function (req, res, next) {
     // Prepare the initial database query from the URL query parameters
     let query = queryBar(req);
 
+    //filtrer par les bar les plus proches des données recupérées avec la requête par exemple GET /api/bars?lat=latitude&lng=longitude
+    bar.geoNear(
+      { type: "point", coordinates: [parseFloate(req.query.lng), parseFloate(req.query.lat)] },
+      { maxDistance: 1000, spherical: true }
+    ).then(function (bar) { res.send(bar); });
+
     // Parse pagination parameters from URL query parameters
     const { page, pageSize } = pag.getPaginationParameters(req);
     // Apply the pagination to the database query
     query = query.skip((page - 1) * pageSize).limit(pageSize);
-    //filtrer par les bar les plus proches des données recupérées avec la requête par exemple GET /api/bars?lat=latitude&lng=longitude
-    bar.geoNear(
-      { type: "point", coordinates: [parseFloate(req.query.lng), parseFloate(req.req.lat)] },
-      { maxDistance: 1000, spherical: true }
-    ).then(function (bar) { res.send(bar); });
+    
+   
 
     Bar.aggregate([
       {
