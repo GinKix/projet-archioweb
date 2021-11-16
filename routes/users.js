@@ -27,10 +27,15 @@ function personNotFound(res, personId) {
  * @api {get} /person/  Show all users
  * @apiName GetUser
  * @apiGroup User
+ * 
+ * @apiSuccess {String} Récupérer les utilisateurs
+ * @apiSuccess         status(201)
+
  *
  */
 router.get('/api/person', authenticate, function (req, res, next) {
-  res.send('Récupérer les utilisateurs');
+  res
+    .send('Récupérer les utilisateurs');
   console.log(req.method);
   console.log(req.path);
   console.log(req.params);
@@ -127,7 +132,6 @@ router.delete('/api/person/:IdPerson', /* utils.requireJson, */ function (req, r
  * @apiName PutUser
  * @apiGroup User
  *
- * @apiSuccess {String} code 200: OK
  * @apiSuccess {String} Person updated: username
  */
 router.put('/api/person/:IdPerson', function (req, res, next) {

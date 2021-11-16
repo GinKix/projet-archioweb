@@ -16,7 +16,14 @@ function RatingNotFound(res, barId) {
 //BARS
 
 
-
+/**
+ * @api {post} /bar/ Create a bar
+ * @apiName PostBar
+ * @apiGroup Bar
+ *
+ * @apiSuccess {String} code 201: sucess
+ * @apiSuccess {Function} savedBar
+ */
 router.post("/api/bar", function (req, res, next) {
 
 
@@ -37,6 +44,14 @@ router.post("/api/bar", function (req, res, next) {
 });
 
 
+/**
+ * @api {get} /bar/ Show all the bar
+ * @apiName GetBar
+ * @apiGroup Bar
+ *
+ * @apiSuccess {String} code 201: sucess
+ * @apiSuccess {Function} savedBar
+ */
 router.get("/api/bar", function (req, res, next) {
 
 
@@ -54,11 +69,11 @@ router.get("/api/bar", function (req, res, next) {
     const { page, pageSize } = pag.getPaginationParameters(req);
     // Apply the pagination to the database query
     query = query.skip((page - 1) * pageSize).limit(pageSize);
-   //filtrer par les bar les plus proches des données recupérées avec la requête par exemple GET /api/bars?lat=latitude&lng=longitude
-   bar.geoNear(
-    { type:"point",coordinates:[parseFloate(req.query.lng),parseFloate(req.req.lat)]},
-    {maxDistance: 1000, spherical:true}
-  ).then(function(bar){ res.send(bar);});
+    //filtrer par les bar les plus proches des données recupérées avec la requête par exemple GET /api/bars?lat=latitude&lng=longitude
+    bar.geoNear(
+      { type: "point", coordinates: [parseFloate(req.query.lng), parseFloate(req.req.lat)] },
+      { maxDistance: 1000, spherical: true }
+    ).then(function (bar) { res.send(bar); });
 
     Bar.aggregate([
       {
@@ -102,7 +117,7 @@ router.get("/api/bar", function (req, res, next) {
       if (err) {
         return next(err);
       }
- 
+
 
       // Add the Link header to the response
       pag.addLinkHeader('/api/bar', page, pageSize, total, res);
@@ -119,7 +134,9 @@ router.get("/api/bar", function (req, res, next) {
           return next(err);
         }
 
-        res.send(bar); // envoi de réponse au client
+        res
+          .status(200)
+          .send(bar); // envoi de réponse au client
 
       });
     });
@@ -128,7 +145,14 @@ router.get("/api/bar", function (req, res, next) {
 });
 
 
-
+/**
+ * @api {get} /bar/ Show one bar
+ * @apiName GetBar
+ * @apiGroup Bar
+ *
+ * @apiSuccess {String} code 200: OK
+ * @apiError {Function} barNotFound 
+ */
 router.get("/api/bar/:IdBar", function (req, res, next) {
   //res.send("Afficher un bar "); // envoi de réponse au client
 
@@ -145,7 +169,14 @@ router.get("/api/bar/:IdBar", function (req, res, next) {
 
 });
 
-
+/**
+ * @api {put} /bar/ Modify one bar
+ * @apiName PutBar
+ * @apiGroup Bar
+ *
+ * @apiSuccess {String} code 200: OK
+ * @apiError {Function} barNotFound 
+ */
 router.put("/api/bar/:IdBar", function (req, res, next) {
   //res.send("Modifier un bar "); // envoi de réponse au client
 
@@ -168,6 +199,14 @@ router.put("/api/bar/:IdBar", function (req, res, next) {
 
 });
 
+/**
+ * @api {delete} /bar/ Delete one bar
+ * @apiName DeleteBar
+ * @apiGroup Bar
+ *
+ * @apiSuccess {String} code 204: No content
+ * @apiError {Function} barNotFound 
+ */
 
 router.delete("/api/bar/:IdBar", function (req, res, next) {
   //res.send("Supprimer un bar "); // envoi de réponse au client
@@ -193,6 +232,15 @@ router.delete("/api/bar/:IdBar", function (req, res, next) {
 
 
 //RATINGS
+
+/**
+ * @api {get} /bar/:IdBar/rating Return the rating of one bar
+ * @apiName GetRating
+ * @apiGroup Rating
+ *
+ * @apiSuccess {String} code 201: sucess
+ * @apiError {Function} RatingNotFound 
+ */
 router.get("/api/bar/:IdBar/rating", function (req, res, next) {
   //res.send("Afficher le rating dun bar");
   new Rating(req.body).save(function (err, savedRating) {
@@ -211,6 +259,16 @@ router.get("/api/bar/:IdBar/rating", function (req, res, next) {
   });
 });
 
+
+/**
+ * @api {post} /bar/:IdBar/rating Create a rating of one bar
+ * @apiName PostRating
+ * @apiGroup Rating
+ *
+ * @apiSuccess {String} code 201: sucess
+ * @apiSuccess {Function} savedRating
+ * @apiError {Function} RatingNotFound 
+ */
 router.post("/api/bar/:IdBar/rating", function (req, res, next) {
   //res.send("Ajouter une note à un bar"); // envoi de réponse au client
   new Rating(req.body).save(function (err, savedRating) {
@@ -223,6 +281,16 @@ router.post("/api/bar/:IdBar/rating", function (req, res, next) {
       .send(savedRating);
   });
 });
+
+/**
+ * @api {delete} /bar/:IdBar/rating Delete the rating of one bar
+ * @apiName DeleteRating
+ * @apiGroup Rating
+ *
+ * @apiSuccess {String} code 204: No content
+ * @apiSuccess {String} Deleted rating IdRating
+ * @apiError {Function} RatingNotFound 
+ */
 
 router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
   //res.send("Supprimer une note à un bar"); // envoi de réponse au client
@@ -247,6 +315,15 @@ router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
 
 });
 
+/**
+ * @api {put} /bar/:IdBar/rating Modifiy the rating of one bar
+ * @apiName PutRating
+ * @apiGroup Rating
+ *
+ * @apiSuccess {String} code 200: OK
+ * @apiSuccess {String} Rating updated IdRating
+ * @apiError {Function} RatingNotFound 
+ */
 router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
   //res.send("Modifier la note du bar"); // envoi de réponse au client
   Rating.findById(req.params.IdRating, function (err, savedRating) {
