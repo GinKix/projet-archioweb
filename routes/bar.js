@@ -82,88 +82,96 @@ router.get("/api/bar", function (req, res, next) {
 
     // Parse pagination parameters from URL query parameters
     const { page, pageSize } = pag.getPaginationParameters(req);
-       // Apply the pagination to the database query
-       query = query.skip((page - 1) * pageSize).limit(pageSize);
+    // Apply the pagination to the database query
+    query = query.skip((page - 1) * pageSize).limit(pageSize);
 
     Bar.aggregate([
-        {
-          $lookup: {
-            from: 'bar',
-            localField: 'idBar',
-            foreignField: 'IdRating',
-            as: 'ratedBar'
-          }
-        },
-        {
-            $unwind: {
-              path: '$ratedBar',
-              // Preserve bar without rating
-              // ("ratedBar" will be null).
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $group: {
-              IdBar: '$idBar',
-              rating: { $avg: '$rating' },
-              name: { $first: '$name' },
-
-              
-            }
-          },
-        
-          {
-            $sort: {
-              name: 1
-            }
-          },
-          {
-            $skip: (page - 1) * pageSize
-          },
-          {
-            $limit: pageSize
-          }
-        ], (err, bar) => {
-            if (err) {
-              return next(err);
-            }
-    
- 
-    // Add the Link header to the response
-    pag.addLinkHeader('/api/bar', page, pageSize, total, res);
-    // Filter bar by rate
-    if (ObjectId.isValid(req.query.rate)) {
-      query = query.where('rate').equals(req.query.rate);
-    }
+      {
+        $lookup: {
+          from: 'bar',
+          localField: 'idBar',
+          foreignField: 'IdRating',
+          as: 'ratedBar'
+        }
+      },
+      {
+        $unwind: {
+          path: '$ratedBar',
+          // Preserve bar without rating
+          // ("ratedBar" will be null).
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $group: {
+          IdBar: '$idBar',
+          rating: { $avg: '$rating' },
+          name: { $first: '$name' },
 
 
+        }
+      },
 
-    // Execute the query
-    query.sort({ name: 1 }).exec(function (err, bar) {
+      {
+        $sort: {
+          name: 1
+        }
+      },
+      {
+        $skip: (page - 1) * pageSize
+      },
+      {
+        $limit: pageSize
+      }
+    ], (err, bar) => {
       if (err) {
         return next(err);
       }
-    
-      res.send(bar); // envoi de réponse au client
 
+
+      // Add the Link header to the response
+      pag.addLinkHeader('/api/bar', page, pageSize, total, res);
+      // Filter bar by rate
+      if (ObjectId.isValid(req.query.rate)) {
+        query = query.where('rate').equals(req.query.rate);
+      }
+
+
+
+      // Execute the query
+      query.sort({ name: 1 }).exec(function (err, bar) {
+        if (err) {
+          return next(err);
+        }
+
+        res.send(bar); // envoi de réponse au client
+
+      });
     });
   });
-});
 
 });
 
 router.get("/api/bar/:IdBar", function (req, res, next) {
-  res.send("Afficher un bar "); // envoi de réponse au client
+  //res.send("Afficher un bar "); // envoi de réponse au client
 
+  Bar.findById(req.params.IdBar, function (err, bar) {
+    if (err) {
+      return next(err);
+    } else if (!bar) {
+      return barNotFound(res, req.params.IdBar);
+    }
+    debug(req.bar);
+    res.sendStatus(200);
 
-  // Bar.find()
+  });
+
 });
 
 
 router.put("/api/bar/:IdBar", function (req, res, next) {
   //res.send("Modifier un bar "); // envoi de réponse au client
 
-  //futur contenu du middleware B
   Bar.findById(req.params.IdBar, function (err, bar) {
     if (err) {
       return next(err);
@@ -210,9 +218,6 @@ router.delete("/api/bar/:IdBar", function (req, res, next) {
 //RATINGS
 router.get("/api/bar/:IdBar/rating", function (req, res, next) {
   //res.send("Afficher le rating dun bar");
-
-
-
   new Rating(req.body).save(function (err, savedRating) {
 
     Rating.findById(req.params.IdRating.value, function (err, bar) {
@@ -239,8 +244,6 @@ router.post("/api/bar/:IdBar/rating", function (req, res, next) {
     res
       .status(201)
       .send(savedRating);
-
-
   });
 });
 
@@ -251,7 +254,7 @@ router.delete("/api/:IdBar/rating/:IdRating", function (req, res, next) {
     if (err) {
       return next(err);
     } else if (!rating) {
-      return personNotFound(res, req.params.IdRating);
+      return RatingNotFound(res, req.params.IdRating);
     }
 
 
@@ -273,7 +276,7 @@ router.put("/api/bar/:IdBar/rating/:IdRating", function (req, res, next) {
     if (err) {
       return next(err);
     } else if (!rating) {
-      return personNotFound(res, req.params.IdRating);
+      return RatingNotFound(res, req.params.IdRating);
     }
 
     rating.update(function (err) {
