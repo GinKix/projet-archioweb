@@ -295,7 +295,7 @@ router.post("/api/bar/:idBar/rating", authenticate, function (req, res, next) {
  * @apiError {Function} RatingNotFound 
  */
 
-router.delete("/api/:IdBar/rating/:idRating", authenticate, function (req, res, next) {
+router.delete("/api/:idBar/rating/:idRating", authenticate, function (req, res, next) {
   //res.send("Supprimer une note à un bar"); // envoi de réponse au client
 
   Rating.findById(req.params.idRating, function (err, savedRating) {
