@@ -77,3 +77,10 @@ exports.responseShouldInclude = function(req, property) {
   // Check whether the property is inside the array
   return propertiesToInclude.indexOf(property) >= 0;
 };
+
+/**
+ * @apiDefine Pagination
+ * @apiParam (URL query parameters) {Number{1..}} [page] The page to retrieve (defaults to 1)
+ * @apiParam (URL query parameters) {Number{1..100}} [pageSize] The number of elements to retrieve in one page (defaults to 100)
+ * @apiSuccess (Response headers) {String} Link Links to the first, previous, next and last pages of the collection (if applicable)
+ */
