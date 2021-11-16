@@ -4,8 +4,8 @@ const User = require('../models/user');
 const { authenticate } = require('./auth');
 const config = require('../config');
 const debug = require('debug')('projet:users');
-const express = require('express');
-const router = express.Router();
+var express = require('express');
+var router = express.Router();
 
 /**
  * @api {get} /users/:id Request a user's information

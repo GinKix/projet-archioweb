@@ -1,6 +1,6 @@
-const express = require('express');
+var express = require('express');
 const user = require('../models/user');
-const router = express.Router();
+var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
