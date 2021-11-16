@@ -16,16 +16,7 @@ function RatingNotFound(res, barId) {
 //BARS
 
 
-/**
- * @api {post} /api/bar Request add bar
- * @apiName GetUser
- * @apiGroup User
- *
- * @apiParam {Number} id Unique identifier of the user
- *
- * @apiSuccess code status: 201
- * 
- */
+
 router.post("/api/bar", function (req, res, next) {
 
 
@@ -45,28 +36,7 @@ router.post("/api/bar", function (req, res, next) {
 
 });
 
-/**
- * @api {get} /api/bar
- * @apiName RetrieveBar
- * @apiGroup Bar
- * @apiVersion 1.0.0
- * @apiDescription Retrieves a paginated list of bar sorted by name (in alphabetical order).
- *
- * @apiUse BarInResponseBody
- * @apiUse Pagination
- *
- * @apiParam (URL query parameters) /api/bar?closeTo=lng,lat
- *
- * @apiExample Example
- *     GET /api/bar?closeTo=lng,lat
- *
- * @apiSuccessExample 200 OK
- *     HTTP/1.1 200 OK
- *     Content-Type: application/json
- *     Link: &lt;https://projet-archioweb.herokuapp.com/api/bar?closeTo=lng,lat;; rel="first prev"
- *
- *    
- */
+
 router.get("/api/bar", function (req, res, next) {
 
 
