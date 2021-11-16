@@ -11,7 +11,7 @@ const userSchema = new Schema({
   registrationDate: Date,
   geolocation: String
 
-  //Rajout de la geolocalisation en temps reel du user by Yousra
+
 });
 
 userSchema.set('toJSON', {
