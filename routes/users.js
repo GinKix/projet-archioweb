@@ -133,6 +133,7 @@ router.delete('/api/person/:IdPerson', /* utils.requireJson, */ function (req, r
  * @apiGroup User
  *
  * @apiSuccess {String} Person updated: username
+ * @apiSuccess {String} Code 200: OK
  */
 router.put('/api/person/:IdPerson', function (req, res, next) {
   //res.send('Modifier un utilisateur');
