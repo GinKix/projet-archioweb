@@ -59,18 +59,14 @@ const barSchema = new Schema({
 
     geolocation: geolocatedSchema ,
 
-//Rajout du schema geoloc et du rate by Yousra 
+
 
 
     picture: {
         data: Buffer,
         type: String
     },
-    rate:{
-
-      type :Schema.Types.ObjectId,
-      ref:'Score'
-    }
+   
 
 
   });
