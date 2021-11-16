@@ -54,6 +54,11 @@ router.get("/api/bar", function (req, res, next) {
     const { page, pageSize } = pag.getPaginationParameters(req);
     // Apply the pagination to the database query
     query = query.skip((page - 1) * pageSize).limit(pageSize);
+   //filtrer par les bar les plus proches des données recupérées avec la requête par exemple GET /api/bars?lat=latitude&lng=longitude
+   bar.geoNear(
+    { type:"point",coordinates:[parseFloate(req.query.lng),parseFloate(req.req.lat)]},
+    {maxDistance: 1000, spherical:true}
+  ).then(function(bar){ res.send(bar);});
 
     Bar.aggregate([
       {
@@ -97,7 +102,7 @@ router.get("/api/bar", function (req, res, next) {
       if (err) {
         return next(err);
       }
-
+ 
 
       // Add the Link header to the response
       pag.addLinkHeader('/api/bar', page, pageSize, total, res);
@@ -121,6 +126,8 @@ router.get("/api/bar", function (req, res, next) {
   });
 
 });
+
+
 
 router.get("/api/bar/:IdBar", function (req, res, next) {
   //res.send("Afficher un bar "); // envoi de réponse au client
