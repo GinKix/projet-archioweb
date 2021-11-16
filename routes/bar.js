@@ -184,7 +184,7 @@ router.put("/api/bar/:idBar", authenticate, function (req, res, next) {
     if (err) {
       return next(err);
     } else if (!bar) {
-      return barNotFound(res, req.params.IdBar);
+      return barNotFound(res, req.params.idBar);
     }
 
     bar.update(function (err) {
@@ -192,7 +192,7 @@ router.put("/api/bar/:idBar", authenticate, function (req, res, next) {
         return next(err);
       }
 
-      debug(`Bar  updated: "${req.bar.name}"`);
+      debug(`Bar updated: "${req.bar.name}"`);
       res.sendStatus(200);
     });
   });
@@ -251,7 +251,7 @@ router.get("/api/bar/:idBar/rating", function (req, res, next) {
       } else if (!rating) {
         return RatingNotFound(res, req.params.idRating);
       }
-      debug(req.Rating);
+      debug(req.rating);
       res
         .send(savedRating)
         .status(201);
